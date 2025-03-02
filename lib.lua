@@ -180,7 +180,8 @@ M.DescriptorTypes = utils.createEnum({
 ---@field irq number     6. Servicing interrupts
 ---@field softirq number 7. Servicing softirqs
 
----@class SoftIrqsStat
+---@class SoftirqStat
+---@field total number        1. Number of total softirq calls
 ---@field net_rx number       1. Number of processed input packets
 ---@field net_tx number       2. Number of processed output packets
 ---@field block number        3. Number of blocks
@@ -191,7 +192,7 @@ M.DescriptorTypes = utils.createEnum({
 ---@field sched number        8. Number of processings of tasks related to process scheduling
 
 --- Special class from handling info from /proc/stat
----@class DescriptorInfoStat: DescriptorInfo
+---@class DescriptorInfoStat
 ---@field agg_cpu CpuStat      Aggregated cpu data
 ---@field cpus CpuStat[]       Cpu data for each core
 ---@field intr number          Count of interrupts since boot time
@@ -200,6 +201,7 @@ M.DescriptorTypes = utils.createEnum({
 ---@field processes number     Count of created processes/threads within fork() & clone()
 ---@field procs_running number Count of currently running processes on CPUs
 ---@field procs_blocked number Count of currently blocked processes, waiting for i/o
+---@field softirq SoftirqStat  ...
 
 ---@type table<DescriptorType, DescriptorInfo>
 DescriptorInfo = {
@@ -251,79 +253,11 @@ function ReadFileData(descriptor_type)
    return file:read("*a")
 end
 
---- Capture words divided by spaces after prefix
---- found in input line
----@param line string line to parse
----@param prefix string prefix to find before capturing values
----@param n integer? number of words to capture after prefix
----@param sep string|table<string>? possible separators
----@return table<string>
---- @example
---- line = "some_prefix 10 20 30 1499"
---- values = GetMultipleWordsAfterPrefix(line, "some_prefix" 3)
----
---- print(values)
---- =============
---- { 10, 20, 30}
-function GetWordsAfterPrefix(line, prefix, n, sep)
-   n = n or 0
-   local pattern = "%w+"
-   if sep == nil then
-      pattern = "%w+"
-   elseif type(sep) == "string" then
-      pattern = "([^" .. sep .. "]+)"
-   elseif type(sep) == "table" then
-      pattern = "([^" .. table.concat(sep) .. "]+)"
-   end
-
-   local values = {}
-   local found_prefix = false
-
-   for word in string.gmatch(line, pattern) do
-      if n ~= 0 and #values == n then
-         break
-      end
-      if word == prefix then
-         found_prefix = true
-      elseif found_prefix then
-         table.insert(values, word)
-      end
-   end
-
-   if not found_prefix then
-      error('Input prefix "' .. prefix .. '" was not found in input line')
-   end
-
-   return values
-end
-
---- Captures single word from line divided by spaces
---- after prefix
----@param line string line to parse
----@param prefix string prefix to find
----@param sep? string|table<string> prefix to find
----@return string
-function GetWordAfterPrefix(line, prefix, sep)
-   return GetWordsAfterPrefix(line, prefix, 1, sep)[1]
-end
-
 --- Read / parse /proc/stat file
+---@return DescriptorInfoStat
 function M.ReadStatFile()
    local data = ReadFileData(M.DescriptorTypes.STAT_FILE)
    local stats = { cpus = {} }
-
-   --- Parses line to get single line value
-   ---@param line string
-   ---@param prefix string
-   ---@return number?
-   local function parse_single(line, prefix)
-      local value = line:match(prefix .. " (%d+)")
-      if value ~= nil then
-         return tonumber(value)
-      else
-         error("Input line do not contain " .. prefix .. " to parse it")
-      end
-   end
 
    for line in string.gmatch(data, "[^\n]+") do
       -- stylua: ignore start
@@ -332,7 +266,7 @@ function M.ReadStatFile()
       if line:match("^" .. "cpu ") then
          local stat = M.CreateSingleCpuStat(line)
          if stat ~= nil then
-            stats["cpu"] = stat
+            stats["agg_cpu"] = stat
          end
 
       -- [ cpus[] ] -- Cpu core data
@@ -344,19 +278,30 @@ function M.ReadStatFile()
 
       -- [ intr ] -- Count of interrupts since boot time
       elseif line:match("^" .. "intr") then
-            stats["intr"] = tonumber(GetWordAfterPrefix(line, "intr"))
+            stats["intr"] = tonumber(M.GetWordAfterPrefix(line, "intr"))
       elseif line:match("^" .. "ctxt") then
-            stats["ctxt"] = tonumber(GetWordAfterPrefix(line, "ctxt"))
+            stats["ctxt"] = tonumber(M.GetWordAfterPrefix(line, "ctxt"))
       elseif line:match("^" .. "btime") then
-            stats["btime"] = tonumber(GetWordAfterPrefix(line, "btime"))
+            stats["btime"] = tonumber(M.GetWordAfterPrefix(line, "btime"))
       elseif line:match("^" .. "processes") then
-            stats["processes"] = tonumber(GetWordAfterPrefix(line, "processes"))
+            stats["processes"] = tonumber(M.GetWordAfterPrefix(line, "processes"))
       elseif line:match("^" .. "procs_running") then
-            stats["procs_running"] = tonumber(GetWordAfterPrefix(line, "procs_running", "%s+"))
+            stats["procs_running"] = tonumber(M.GetWordAfterPrefix(line, "procs_running", "%s+"))
       elseif line:match("^" .. "procs_blocked") then
-            stats["procs_blocked"] = tonumber(GetWordAfterPrefix(line, "procs_blocked", "%s+"))
+            stats["procs_blocked"] = tonumber(M.GetWordAfterPrefix(line, "procs_blocked", "%s+"))
+      elseif line:match("^" .. "softirq") then
+            local softirq_data = utils.map(M.GetWordsAfterPrefix(line, "softirq"), tonumber)
+            stats["softirq"] =  {
+	    	net_rx = softirq_data[1],
+	    	net_tx = softirq_data[2],
+	    	block = softirq_data[3],
+	    	irq_poll = softirq_data[4],
+	    	tasklet = softirq_data[5],
+	    	timer = softirq_data[6],
+	    	net_rx_error = softirq_data[7],
+	    	sched = softirq_data[8],
+            }
       end
-
       -- stylua: ignore end
    end
    return stats

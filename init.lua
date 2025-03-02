@@ -7,12 +7,12 @@ local utils = require("utils")
 
 -- print(lib.DescriptorTypes.STAT_FILE)
 --
-lib.OpenDescriptorFileInternal(lib.DescriptorTypes.STAT_FILE)
+-- lib.OpenDescriptorFileInternal(lib.DescriptorTypes.STAT_FILE)
 
 -- local cpu_stats = lib.ReadStatFile()
 
 local function cpustr()
-   local stats = lib.ReadStatFile()
+   local stats = lib.readStatFileOnce()
    return utils.dump(stats)
    -- local message = ""
    -- for _, stat in ipairs(stats) do

@@ -67,7 +67,7 @@ end
 --- print(values)
 --- =============
 --- { 10, 20, 30}
-function M.GetWordsAfterPrefix(line, prefix, n, sep)
+function M.getWordsAfterPrefix(line, prefix, n, sep)
    n = n or 0
    local pattern = "%w+"
    if sep == nil then
@@ -105,8 +105,8 @@ end
 ---@param prefix string prefix to find
 ---@param sep? string|table<string> prefix to find
 ---@return string
-function M.GetWordAfterPrefix(line, prefix, sep)
-   return M.GetWordsAfterPrefix(line, prefix, 1, sep)[1]
+function M.getWordAfterPrefix(line, prefix, sep)
+   return M.getWordsAfterPrefix(line, prefix, 1, sep)[1]
 end
 
 return M

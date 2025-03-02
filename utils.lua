@@ -23,4 +23,12 @@ function M.dump(tbl, indent)
 	return str .. indent .. "}"
 end
 
+function M.createEnum(tbl)
+	return setmetatable({}, {
+		__index = tbl,
+		__newindex = function(_, key, _)
+			error("Attempt to modify enum: " .. tostring(key), 2)
+		end,
+	})
+end
 return M

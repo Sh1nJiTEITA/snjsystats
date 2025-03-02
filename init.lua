@@ -1,11 +1,23 @@
+#! /usr/bin/env lua
 local lib = require("lib")
-local data = lib.ReadAllFile("/proc/stat")
-local cpu_0 = string.sub(data, 0, string.find(data, "\n"))
+local utils = require("utils")
 
--- cpu_0 = lib.CreateSingleCpuStat(cpu_0)
+-- print(lib.GetCpuLoadStr())
+-- print(lib.GetCpuLoadAverage())
 
-local stats = lib.GetCpuStats()
+-- print(lib.DescriptorTypes.STAT_FILE)
+--
+lib.OpenDescriptorFileInternal(lib.DescriptorTypes.STAT_FILE)
 
-for i, stat in ipairs(stats) do
-	print(i, M.toString(stat))
+-- local cpu_stats = lib.ReadStatFile()
+
+local function cpustr()
+	local stats = lib.ReadStatFile()
+	local message = ""
+	for _, stat in ipairs(stats) do
+		message = message .. string.format("%-10s %-5f", stat.name, M.CalculateLoad(stat)) .. "\n"
+	end
+	return message
 end
+
+print(cpustr())

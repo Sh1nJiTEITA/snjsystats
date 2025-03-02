@@ -12,12 +12,14 @@ lib.OpenDescriptorFileInternal(lib.DescriptorTypes.STAT_FILE)
 -- local cpu_stats = lib.ReadStatFile()
 
 local function cpustr()
-	local stats = lib.ReadStatFile()
-	local message = ""
-	for _, stat in ipairs(stats) do
-		message = message .. string.format("%-10s %-5f", stat.name, M.CalculateLoad(stat)) .. "\n"
-	end
-	return message
+   local stats = lib.ReadStatFile()
+   return utils.dump(stats)
+   -- local message = ""
+   -- for _, stat in ipairs(stats) do
+   --    message = message .. string.format("%-10s %-5f", stat.name, M.CalculateLoad(stat)) .. "\n"
+   -- end
+   -- return message
 end
 
+-- cpustr()
 print(cpustr())

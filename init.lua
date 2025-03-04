@@ -1,25 +1,15 @@
-#! /usr/bin/env lua
-local lib = require("lib")
+-- #! /usr/bin/env lua
+
 local utils = require("utils")
+local m_cpu = require("statfiles.stat")
+local m_memory = require("statfiles.memory")
+local m_desc = require("statfiles.desc")
 
--- print(lib.GetCpuLoadStr())
--- print(lib.GetCpuLoadAverage())
+local raw = m_cpu.StatFileHandle:new()
+local raw = m_memory.FileHandleMemory:new()
 
--- print(lib.DescriptorTypes.STAT_FILE)
+print(raw:tostring())
 --
--- lib.OpenDescriptorFileInternal(lib.DescriptorTypes.STAT_FILE)
+local stat_res = raw:parse()
 
--- local cpu_stats = lib.ReadStatFile()
-
-local function cpustr()
-   local stats = lib.readStatFileOnce()
-   return utils.dump(stats)
-   -- local message = ""
-   -- for _, stat in ipairs(stats) do
-   --    message = message .. string.format("%-10s %-5f", stat.name, M.CalculateLoad(stat)) .. "\n"
-   -- end
-   -- return message
-end
-
--- cpustr()
-print(cpustr())
+print(utils.dump(stat_res))

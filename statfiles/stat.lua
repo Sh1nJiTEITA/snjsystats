@@ -1,14 +1,20 @@
-local M = {}
-package.path = package.path .. ";../?lua"
+M = {}
 
+package.path = package.path .. ";../?.lua;./?.lua;./statfiles/?.lua"
+
+local desc = require("desc")
 local utils = require("utils")
 
---[[ 
--- ================================
+M.StatFileHandle = desc.DataFileHandle:new({})
 
-	/proc/stat
---]]
--- ================================
+function M.StatFileHandle:new(o)
+   o = o or {}
+   o.path = "/proc/stat"
+   o.file = io.open(o.path, "r")
+   setmetatable(o, self)
+   self.__index = self
+   return o
+end
 
 --- Cpu statistics from /proc/stat
 ---@class CpuStat
@@ -33,7 +39,7 @@ local utils = require("utils")
 ---@field sched number        8. Number of processings of tasks related to process scheduling
 
 --- Special class from handling info from /proc/stat
----@class DescriptorInfoStat
+---@class StatFileResult
 ---@field agg_cpu CpuStat      Aggregated cpu data
 ---@field cpus CpuStat[]       Cpu data for each core
 ---@field intr number          Count of interrupts since boot time
@@ -61,8 +67,10 @@ end
 
 --- Read / parse /proc/stat file
 ---@param data string
----@return DescriptorInfoStat
-function M.readStatFile(data)
+---@return StatFileResult
+function M.StatFileHandle:parse(data)
+   data = data or self:read()
+
    -- local data = desc.ReadFileData(lib.DescriptorTypes.STAT_FILE)
    local stats = { cpus = {} }
 

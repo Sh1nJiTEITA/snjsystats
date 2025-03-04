@@ -1,9 +1,9 @@
-M = {}
+Desc = {}
 
 local utils = require("utils")
 
 ---@enum DescriptorType
-M.DescriptorTypes = utils.createEnum({
+Desc.DescriptorTypes = utils.createEnum({
    STAT_FILE = 1,
 })
 
@@ -15,7 +15,7 @@ M.DescriptorTypes = utils.createEnum({
 
 ---@type table<DescriptorType, DescriptorInfo>
 DescriptorInfo = {
-   [M.DescriptorTypes.STAT_FILE] = {
+   [Desc.DescriptorTypes.STAT_FILE] = {
       path = "/proc/stat",
       file = nil,
       other = {},
@@ -32,35 +32,35 @@ end
 --- Opens system data file and saves descriptor inside
 --- internal DescriptorFiles table
 ---@param descriptor_type DescriptorType
-function M.openDescriptorFileInternal(descriptor_type)
+function Desc.openDescriptorFileInternal(descriptor_type)
    DescriptorInfo[descriptor_type].file = openDescriptorFile(descriptor_type)
 end
 
 --- Returns true if descriptor file is opened false otherwise
 ---@param descriptor_type DescriptorType
 ---@return boolean
-function M.isDescriptorFileOpened(descriptor_type)
+function Desc.isDescriptorFileOpened(descriptor_type)
    return DescriptorInfo[descriptor_type].file ~= nil
 end
 
 --- Checks and raises error & aborts if input descriptor
 --- file are not registered via OpenDescriptorFile
 ---@param descriptor_type DescriptorType
-function M.validateDescriptorFile(descriptor_type)
-   if not M.isDescriptorFileOpened(descriptor_type) then
+function Desc.validateDescriptorFile(descriptor_type)
+   if not Desc.isDescriptorFileOpened(descriptor_type) then
       error("Descriptor file with path " .. DescriptorInfo[descriptor_type].file .. " are nil")
    end
 end
 
 ---@param descriptor_type DescriptorType
 ---@return string
-function M.readFileData(descriptor_type)
-   M.validateDescriptorFile(descriptor_type)
+function Desc.readFileData(descriptor_type)
+   Desc.validateDescriptorFile(descriptor_type)
    local file = DescriptorInfo[descriptor_type].file
    ---@cast file file* Validation is not needed nil check
-   --- it was made inside M.ValidateDescriptorFile
+   --- it was made inside Desc.ValidateDescriptorFile
    file:seek("set", 0)
    return file:read("*a")
 end
 
-return M
+return Desc

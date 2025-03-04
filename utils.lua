@@ -1,10 +1,10 @@
-M = {}
+-- highlight link DiagnosticUnnecessary NONE
 
 --- Simple convert lua table to string
 ---@param tbl table to convert
 ---@param indent string start indent
 ---@return string
-function M.dump(tbl, indent)
+local function dump(tbl, indent)
    indent = indent or ""
    local str = "{\n"
    local nextIndent = indent .. "  "
@@ -14,7 +14,7 @@ function M.dump(tbl, indent)
       local value
 
       if type(v) == "table" then
-         value = M.dump(v, nextIndent)
+         value = dump(v, nextIndent)
       elseif type(v) == "string" then
          value = string.format("%q", v)
       else
@@ -30,7 +30,7 @@ end
 --- Creates immutable table
 ---@param tbl table table to make immutable
 ---@return table
-function M.createEnum(tbl)
+local function createEnum(tbl)
    return setmetatable({}, {
       __index = tbl,
       __newindex = function(_, key, _)
@@ -45,7 +45,7 @@ end
 ---@param t table table to work with
 ---@param func function func to apply at
 ---@return table
-function M.map(t, func)
+local function map(t, func)
    local result = {}
    for k, v in pairs(t) do
       result[k] = func(v)
@@ -62,12 +62,12 @@ end
 ---@return table<string>
 --- @example
 --- line = "some_prefix 10 20 30 1499"
---- values = GetMultipleWordsAfterPrefix(line, "some_prefix" 3)
+--- values = GetUtilsModule.ltipleWordsAfterPrefix(line, "some_prefix" 3)
 ---
 --- print(values)
 --- =============
 --- { 10, 20, 30}
-function M.getWordsAfterPrefix(line, prefix, n, sep)
+local function getWordsAfterPrefix(line, prefix, n, sep)
    n = n or 0
    local pattern = "%w+"
    if sep == nil then
@@ -82,6 +82,7 @@ function M.getWordsAfterPrefix(line, prefix, n, sep)
    local found_prefix = false
 
    for word in string.gmatch(line, pattern) do
+      print(string.format("%q", word))
       if n ~= 0 and #values == n then
          break
       end
@@ -93,9 +94,10 @@ function M.getWordsAfterPrefix(line, prefix, n, sep)
    end
 
    if not found_prefix then
-      error('Input prefix "' .. prefix .. '" was not found in input line')
+      error('Input prefix "' .. prefix .. '" was not found in input line ' .. line)
    end
 
+   print("\n")
    return values
 end
 
@@ -105,8 +107,14 @@ end
 ---@param prefix string prefix to find
 ---@param sep? string|table<string> prefix to find
 ---@return string
-function M.getWordAfterPrefix(line, prefix, sep)
-   return M.getWordsAfterPrefix(line, prefix, 1, sep)[1]
+local function getWordAfterPrefix(line, prefix, sep)
+   return getWordsAfterPrefix(line, prefix, 1, sep)[1]
 end
 
-return M
+return {
+   dump = dump,
+   createEnum = createEnum,
+   map = map,
+   getWordsAfterPrefix = getWordsAfterPrefix,
+   getWordAfterPrefix = getWordAfterPrefix,
+}

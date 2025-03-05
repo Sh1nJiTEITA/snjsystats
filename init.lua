@@ -8,8 +8,11 @@ local m_desc = require("statfiles.desc")
 local raw = m_cpu.StatFileHandle:new()
 local raw = m_memory.FileHandleMemory:new()
 
-print(raw:tostring())
---
-local stat_res = raw:parse()
+utils.toSnakeCase("SomeWordAfter")
 
-print(utils.dump(stat_res))
+--
+-- print(raw:tostring())
+-- --
+-- local stat_res = raw:parse()
+--
+-- print(utils.dump(stat_res))

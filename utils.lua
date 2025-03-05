@@ -82,7 +82,6 @@ local function getWordsAfterPrefix(line, prefix, n, sep)
    local found_prefix = false
 
    for word in string.gmatch(line, pattern) do
-      print(string.format("%q", word))
       if n ~= 0 and #values == n then
          break
       end
@@ -97,7 +96,6 @@ local function getWordsAfterPrefix(line, prefix, n, sep)
       error('Input prefix "' .. prefix .. '" was not found in input line ' .. line)
    end
 
-   print("\n")
    return values
 end
 
@@ -111,10 +109,30 @@ local function getWordAfterPrefix(line, prefix, sep)
    return getWordsAfterPrefix(line, prefix, 1, sep)[1]
 end
 
+local function toSnakeCase(line)
+   print(line)
+   for word in line:gmatch("[^%s]+") do
+      local part_index = 0
+      print(string.format(
+         "%q",
+         word:gsub("%u+", function(part)
+            part_index = part_index + 1
+            if part_index - 1 == 0 then
+               return part:lower()
+            else
+               return "_" .. part:lower()
+            end
+         end)
+      ))
+   end
+end
+
 return {
    dump = dump,
    createEnum = createEnum,
    map = map,
    getWordsAfterPrefix = getWordsAfterPrefix,
    getWordAfterPrefix = getWordAfterPrefix,
+
+   toSnakeCase = toSnakeCase,
 }

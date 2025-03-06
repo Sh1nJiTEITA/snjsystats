@@ -8,12 +8,12 @@ local utils = require("utils")
 MemoryModule.FileHandleMemory = desc.DataFileHandle:new({})
 
 function MemoryModule.FileHandleMemory:new(o)
-   o = o or {}
-   o.path = "/proc/meminfo"
-   o.file = io.open(o.path, "r")
-   setmetatable(o, self)
-   self.__index = self
-   return o
+	o = o or {}
+	o.path = "/proc/meminfo"
+	o.file = io.open(o.path, "r")
+	setmetatable(o, self)
+	self.__index = self
+	return o
 end
 
 -- Class structure from https://www.baeldung.com/linux/proc-meminfo
@@ -24,11 +24,11 @@ end
 ---@field available integer [MemAvailable] Available RAM for allocation
 local MemoryGeneral = {}
 function MemoryGeneral.new(data)
-   return {
-      total = data.total or 0,
-      free = data.free or 0,
-      available = data.available or 0,
-   }
+	return {
+		total = data.total or 0,
+		free = data.free or 0,
+		available = data.available or 0,
+	}
 end
 
 ---@class MemoryBuffersCache
@@ -40,10 +40,10 @@ MemoryBuffersCache.__index = MemoryBuffersCache
 ---@param data table
 ---@return MemoryBuffersCache
 function MemoryBuffersCache.new(data)
-   return setmetatable({
-      buffers = data.buffers or 0,
-      cached = data.cached or 0,
-   }, MemoryBuffersCache)
+	return setmetatable({
+		buffers = data.buffers or 0,
+		cached = data.cached or 0,
+	}, MemoryBuffersCache)
 end
 
 ---@class MemorySwapSpace
@@ -56,11 +56,11 @@ MemorySwapSpace.__index = MemorySwapSpace
 ---@param data table
 ---@return MemorySwapSpace
 function MemorySwapSpace.new(data)
-   return setmetatable({
-      swap_cached = data.swap_cached or 0,
-      swap_total = data.swap_total or 0,
-      swap_free = data.swap_free or 0,
-   }, MemorySwapSpace)
+	return setmetatable({
+		swap_cached = data.swap_cached or 0,
+		swap_total = data.swap_total or 0,
+		swap_free = data.swap_free or 0,
+	}, MemorySwapSpace)
 end
 
 ---@class MemoryDiskWriteBack
@@ -76,14 +76,14 @@ MemoryDiskWriteBack.__index = MemoryDiskWriteBack
 ---@param data table
 ---@return MemoryDiskWriteBack
 function MemoryDiskWriteBack.new(data)
-   return setmetatable({
-      active = data.active or 0,
-      inactive = data.inactive or 0,
-      active_anon = data.active_anon or 0,
-      inactive_anon = data.inactive_anon or 0,
-      active_file = data.active_file or 0,
-      inactive_file = data.inactive_file or 0,
-   }, MemoryDiskWriteBack)
+	return setmetatable({
+		active = data.active or 0,
+		inactive = data.inactive or 0,
+		active_anon = data.active_anon or 0,
+		inactive_anon = data.inactive_anon or 0,
+		active_file = data.active_file or 0,
+		inactive_file = data.inactive_file or 0,
+	}, MemoryDiskWriteBack)
 end
 
 ---@class MemoryMapped
@@ -96,11 +96,11 @@ MemoryMapped.__index = MemoryMapped
 ---@param data table
 ---@return MemoryMapped
 function MemoryMapped.new(data)
-   return setmetatable({
-      dirty = data.dirty or 0,
-      writeback = data.writeback or 0,
-      writeback_tmp = data.writeback_tmp or 0,
-   }, MemoryMapped)
+	return setmetatable({
+		dirty = data.dirty or 0,
+		writeback = data.writeback or 0,
+		writeback_tmp = data.writeback_tmp or 0,
+	}, MemoryMapped)
 end
 
 ---@class MemoryShared
@@ -113,11 +113,11 @@ MemoryShared.__index = MemoryShared
 ---@param data table
 ---@return MemoryShared
 function MemoryShared.new(data)
-   return setmetatable({
-      shmem = data.shmem or 0,
-      shmem_huge_pages = data.shmem_huge_pages or 0,
-      shmem_pmd_mapped = data.shmem_pmd_mapped or 0,
-   }, MemoryShared)
+	return setmetatable({
+		shmem = data.shmem or 0,
+		shmem_huge_pages = data.shmem_huge_pages or 0,
+		shmem_pmd_mapped = data.shmem_pmd_mapped or 0,
+	}, MemoryShared)
 end
 
 ---@class MemoryKernel
@@ -132,13 +132,13 @@ MemoryKernel.__index = MemoryKernel
 ---@param data table
 ---@return MemoryKernel
 function MemoryKernel.new(data)
-   return setmetatable({
-      k_reclaimable = data.k_reclaimable or 0,
-      slab = data.slab or 0,
-      s_reclaimable = data.s_reclaimable or 0,
-      s_unreclaim = data.s_unreclaim or 0,
-      kernel_stack = data.kernel_stack or 0,
-   }, MemoryKernel)
+	return setmetatable({
+		k_reclaimable = data.k_reclaimable or 0,
+		slab = data.slab or 0,
+		s_reclaimable = data.s_reclaimable or 0,
+		s_unreclaim = data.s_unreclaim or 0,
+		kernel_stack = data.kernel_stack or 0,
+	}, MemoryKernel)
 end
 
 ---@class MemoryAllocationAvailability
@@ -150,10 +150,10 @@ MemoryAllocationAvailability.__index = MemoryAllocationAvailability
 ---@param data table
 ---@return MemoryAllocationAvailability
 function MemoryAllocationAvailability.new(data)
-   return setmetatable({
-      commit_limit = data.commit_limit or 0,
-      committed_as = data.committed_as or 0,
-   }, MemoryAllocationAvailability)
+	return setmetatable({
+		commit_limit = data.commit_limit or 0,
+		committed_as = data.committed_as or 0,
+	}, MemoryAllocationAvailability)
 end
 
 ---@class MemoryVirtual
@@ -167,12 +167,12 @@ MemoryVirtual.__index = MemoryVirtual
 ---@param data table
 ---@return MemoryVirtual
 function MemoryVirtual.new(data)
-   return setmetatable({
-      page_tables = data.page_tables or 0,
-      vmalloc_total = data.vmalloc_total or 0,
-      vmalloc_used = data.vmalloc_used or 0,
-      vmalloc_chunk = data.vmalloc_chunk or 0,
-   }, MemoryVirtual)
+	return setmetatable({
+		page_tables = data.page_tables or 0,
+		vmalloc_total = data.vmalloc_total or 0,
+		vmalloc_used = data.vmalloc_used or 0,
+		vmalloc_chunk = data.vmalloc_chunk or 0,
+	}, MemoryVirtual)
 end
 
 ---@class MemoryHugePages
@@ -191,17 +191,17 @@ MemoryHugePages.__index = MemoryHugePages
 ---@param data table
 ---@return MemoryHugePages
 function MemoryHugePages.new(data)
-   return setmetatable({
-      anon_huge_pages = data.anon_huge_pages or 0,
-      file_huge_pages = data.file_huge_pages or 0,
-      file_pmd_mapped = data.file_pmd_mapped or 0,
-      huge_pages_total = data.huge_pages_total or 0,
-      huge_pages_free = data.huge_pages_free or 0,
-      huge_pages_rsvd = data.huge_pages_rsvd or 0,
-      huge_pages_surp = data.huge_pages_surp or 0,
-      huge_page_size = data.huge_page_size or 0,
-      hugetlb = data.hugetlb or 0,
-   }, MemoryHugePages)
+	return setmetatable({
+		anon_huge_pages = data.anon_huge_pages or 0,
+		file_huge_pages = data.file_huge_pages or 0,
+		file_pmd_mapped = data.file_pmd_mapped or 0,
+		huge_pages_total = data.huge_pages_total or 0,
+		huge_pages_free = data.huge_pages_free or 0,
+		huge_pages_rsvd = data.huge_pages_rsvd or 0,
+		huge_pages_surp = data.huge_pages_surp or 0,
+		huge_page_size = data.huge_page_size or 0,
+		hugetlb = data.hugetlb or 0,
+	}, MemoryHugePages)
 end
 
 ---@class FileResultMemory
@@ -222,40 +222,39 @@ FileResultMemory.__index = FileResultMemory
 ---@param data table
 ---@return FileResultMemory
 function FileResultMemory.new(data)
-   return setmetatable({
-      general = MemoryGeneral.new(data or {}),
-      buffers_cache = MemoryBuffersCache.new(data or {}),
-      swap_space = MemorySwapSpace.new(data or {}),
-      disk_write_back = MemoryDiskWriteBack.new(data or {}),
-      mapped = MemoryMapped.new(data or {}),
-      shared = MemoryShared.new(data or {}),
-      kernel = MemoryKernel.new(data or {}),
-      allocation_availability = MemoryAllocationAvailability.new(data or {}),
-      virtual = MemoryVirtual.new(data or {}),
-      huge_pages = MemoryHugePages.new(data or {}),
-      other = data or {},
-   }, FileResultMemory)
+	return setmetatable({
+		general = MemoryGeneral.new(data or {}),
+		buffers_cache = MemoryBuffersCache.new(data or {}),
+		swap_space = MemorySwapSpace.new(data or {}),
+		disk_write_back = MemoryDiskWriteBack.new(data or {}),
+		mapped = MemoryMapped.new(data or {}),
+		shared = MemoryShared.new(data or {}),
+		kernel = MemoryKernel.new(data or {}),
+		allocation_availability = MemoryAllocationAvailability.new(data or {}),
+		virtual = MemoryVirtual.new(data or {}),
+		huge_pages = MemoryHugePages.new(data or {}),
+	}, FileResultMemory)
 end
 
 --- Read / parse /proc/stat file
 ---@param data string
 ---@return FileResultMemory
 function MemoryModule.FileHandleMemory:parse2(data)
-   data = data or self:read()
-   local total = {
-      general = {},
-      buffers_cache = {},
-      swap_space = {},
-      disk_write_back = {},
-      mapped = {},
-      shared = {},
-      kernel = {},
-      allocation_availability = {},
-      virtual = {},
-      huge_pages = {},
-      other = {},
-   }
-   for line in string.gmatch(data, "[^\n]+") do
+	data = data or self:read()
+	local total = {
+		general = {},
+		buffers_cache = {},
+		swap_space = {},
+		disk_write_back = {},
+		mapped = {},
+		shared = {},
+		kernel = {},
+		allocation_availability = {},
+		virtual = {},
+		huge_pages = {},
+		other = {},
+	}
+	for line in string.gmatch(data, "[^\n]+") do
       -- stylua: ignore start
       if line:match("^" .. "MemTotal") then total["general"]["total"] = tonumber(utils.getWordAfterPrefix(line, "MemTotal"))
       elseif line:match("^" .. "MemFree") then total["general"]["free"] = tonumber(utils.getWordAfterPrefix(line, "MemFree"))
@@ -324,33 +323,33 @@ function MemoryModule.FileHandleMemory:parse2(data)
 
       -- stylua: ignore end
       end
-   end
-   return total
+	end
+	return total
 end
 
 function MemoryModule.FileHandleMemory:parse(data)
-   data = data or self:read()
-   local parsed = {}
-   for line in data:gmatch("[^\n]+") do
-      local key = nil
-      local value = nil
-      for word in line:gmatch("[^:%s]+") do
-         if word ~= "kB" then
-            local num = tonumber(word)
-            if num ~= nil then
-               value = num
-            else
-               key = word
-            end
-         end
-         if key and value then
-            parsed[key] = value
-            key = nil
-            value = nil
-         end
-      end
-   end
-   return FileResultMemory.new(parsed)
+	data = data or self:read()
+	local parsed = {}
+	for line in data:gmatch("[^\n]+") do
+		local key = nil
+		local value = nil
+		for word in line:gmatch("[^:%s]+") do
+			if word ~= "kB" then
+				local num = tonumber(word)
+				if num ~= nil then
+					value = num
+				else
+					key = word
+				end
+			end
+			if key and value then
+				parsed[utils.toSnakeCase(key)] = value
+				key = nil
+				value = nil
+			end
+		end
+	end
+	return FileResultMemory.new(parsed)
 end
 
 return MemoryModule

@@ -31,7 +31,7 @@ function M.DataFileHandle:read()
    return self.file:read("*a")
 end
 
----@return string
+---@return table
 function M.DataFileHandle:parse()
    error("Not implemented parse")
 end

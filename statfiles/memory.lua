@@ -352,4 +352,6 @@ function MemoryModule.FileHandleMemory:parse(data)
    return FileResultMemory.new(parsed)
 end
 
+function MemoryModule.FileHandleMemory:to_string() end
+
 return MemoryModule
